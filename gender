@@ -1,0 +1,44 @@
+#credits to @misc{ar2018cvlib,
+#  author =       {Arun Ponnusamy},
+#  title =        {cvlib - high level Computer Vision library for Python},
+#  howpublished = {\url{https://github.com/arunponnusamy/cvlib}},
+#  year =         {2018}
+#}
+
+import cv2
+import cvlib as cv
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+
+img= cv2.imread('gender.jpg')
+
+
+# apply face detection
+face, conf = cv.detect_face(img)
+
+plt.figure(figsize = (10,10))
+
+for f in face:
+    
+    (startX,startY) =  f[0], f[1]
+    (endX,endY) = f[2], f[3]
+    
+    # draw rectangle over face
+    cv2.rectangle(img, (startX,startY), (endX,endY), (0,255,0), 2)
+
+    # apply gender detection
+    (label, confidence) = cv.detect_gender(img)
+    
+    print(confidence)
+    print(label)
+
+    idx = np.argmax(confidence)
+    label = label[idx]
+    label = "{}: {:.2f}%".format(label, confidence[idx] * 100)
+    cv2.putText(img, label, (startX, startY),  cv2.FONT_HERSHEY_SIMPLEX,1, (0, 255, 0), 2)    
+    plt.imshow(img)
+         
+cv2.waitKey()
+cv2.destroyAllWindows()
+
